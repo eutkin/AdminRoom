@@ -21,6 +21,7 @@ class RedirectEdit extends Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangeTextArea = this.handleChangeTextArea.bind(this);
     }
 
     async componentDidMount() {
@@ -37,6 +38,15 @@ class RedirectEdit extends Component {
         const name = target.name;
         let item = {...this.state.item};
         item[name] = value;
+        this.setState({item})
+    }
+
+    handleChangeTextArea(event) {
+        const target = event.target;
+        const list = target.value.split('\n').map(line => line.trim()).filter(line => line !== '');
+        const name = target.name;
+        let item = {...this.state.item};
+        item[name] = list;
         this.setState({item})
     }
 
@@ -57,23 +67,38 @@ class RedirectEdit extends Component {
     render() {
         const {item} = this.state;
         const title = <h2>{item.isNew ? 'Создать Редирект' : 'Редактировать Редирект'}</h2>;
-        const pathFormGroup = item.isNew ?
-            <FormGroup>
-                <Label for="path">Путь</Label>
-                <Input type="text" name="path" id="path" value={item.path || ''}
-                       onChange={this.handleChange} autoComplete="path"/>
-            </FormGroup>
-            : '';
+        const pathFormGroup = this.getPathFormGroup(item);
         return <div>
             <AppNavbar/>
-            <Container fluid="true">
+            <Container fluid>
                 {title}
                 <Form onSubmit={this.handleSubmit}>
                     {pathFormGroup}
                     <FormGroup>
+                        <Label for="type">Тип редиректа</Label>
+                        <Input type="select" name="type" id="type"
+                               onChange={this.handleChange}
+                        >
+                            <option value="META">META</option>
+                            <option value="STATUS_307">307</option>
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="random">Случайный выбор между направлениями</Label>≈
+                        <Input type="checkbox" name="random" id="random" onChange={this.handleChange}/>{' '}
+                    </FormGroup>
+                    <FormGroup>
                         <Label for="blackUrl">Адрес для черного списка</Label>
                         <Input type="text" name="blackUrl" id="blackUrl" value={item.blackUrl || ''}
                                onChange={this.handleChange} autoComplete="blackUrl"/>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="blackList">Черный список ip</Label>
+                        <Input type="textarea" name="blackList" id="blackList" onChange={this.handleChangeTextArea}/>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="destinations">Черный список ip</Label>
+                        <Input type="textarea" name="destinations" id="destinations" onChange={this.handleChangeTextArea}/>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
@@ -84,6 +109,15 @@ class RedirectEdit extends Component {
         </div>
     }
 
+    getPathFormGroup(item) {
+        return item.isNew ?
+            <FormGroup>
+                <Label for="path">Путь</Label>
+                <Input type="text" name="path" id="path" value={item.path || ''}
+                       onChange={this.handleChange} autoComplete="path"/>
+            </FormGroup>
+            : '';
+    }
 }
 
 export default withRouter(RedirectEdit);

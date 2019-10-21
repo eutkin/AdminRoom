@@ -48,10 +48,10 @@ class Redirects extends Component {
         }
 
         const redirectList = redirects.map(redirect => {
-            const blackList = redirect.blackList.map(bl => <li>{bl}</li>);
+            const blackList = redirect.blackList.map(bl => <li key={bl}>{bl}</li>);
             const destinations = redirect.destinations
                 .sort(this.defaultDestAlwaysFirstComparator)
-                .map(destination => <li>{destination.url}</li>);
+                .map(destination => <li key={destination.id}>{destination.url}</li>);
             return <tr key={redirect.path}>
                 <td>{redirect.path}</td>
                 <td>{redirect.type}</td>
